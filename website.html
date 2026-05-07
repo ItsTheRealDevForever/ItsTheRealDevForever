@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevForever | 3D Portfolio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Shadows Into Light', cursive;
+            font-size: 20px;
+            color: #ffd700;
+            min-height: 100vh;
+            background-color: #faf8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* --- GLOW PANELS --- */
+        .glow-panel {
+            width: 100%;
+            background-color: #000000; 
+            position: relative;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .glow-panel::after {
+            content: "";
+            position: absolute;
+            top: 0; left: -150%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 100, 0, 0.3), rgba(255, 255, 255, 0.4), rgba(0, 100, 0, 0.3), transparent);
+            transform: skewX(-20deg);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+
+        .glow-panel:hover::after { opacity: 1; animation: shine 3s infinite; }
+        @keyframes shine { 0% { left: -150%; } 100% { left: 150%; } }
+
+        /* --- TOP BAR --- */
+        .top-bar {
+            padding: 25px 40px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            border-bottom: 6px solid #006400; 
+            height: 100px;
+        }
+
+        .top-bar-text {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.2rem;
+            font-weight: bold;
+            background: linear-gradient(to top, #ffd700 0%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        .glow-line { width: 100%; height: 6px; background: #111; transition: 0.4s; z-index: 101; }
+        
+        .top-bar:hover + .glow-line,
+        .site-footer:hover .bottom-glow-line { 
+            background: #006400; 
+            box-shadow: 0 0 20px #006400, 0 0 10px #fff; 
+        }
+
+        /* --- MENU SYSTEM --- */
+        .menu-icon { cursor: pointer; display: flex; flex-direction: column; gap: 6px; z-index: 2000; padding: 10px; }
+        .menu-icon div { width: 35px; height: 4px; background-color: #ffd700; border-radius: 2px; transition: 0.3s; }
+
+        #menu-overlay {
+            position: fixed;
+            top: 0; right: -100%; width: 100%; height: 100%;
+            background-color: #004d00;
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        #menu-overlay.open { right: 0; }
+
+        .menu-item {
+            background-color: #000;
+            color: #ffd700;
+            padding: 15px 50px;
+            font-size: 2.5rem;
+            cursor: pointer;
+            border: 4px solid #006400; 
+            box-shadow: 10px 10px 0px #000;
+            transition: 0.2s;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .menu-item:hover { transform: translate(-5px, -5px); box-shadow: 15px 15px 0px #002b00; border-color: #006400; }
+
+        /* --- CONTENT SECTIONS --- */
+        .content-section {
+            display: none;
+            width: 100%;
+            padding: 60px 20px;
+            z-index: 10;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content-section.active { display: flex; }
+
+        /* --- ABOUT ME --- */
+        .profile-wrapper { position: relative; display: inline-block; cursor: pointer; margin-bottom: 20px; }
+        .profile-pic { width: 180px; height: 180px; border-radius: 50%; border: 8px solid #006400; box-shadow: 12px 12px 0px #333; object-fit: cover; }
+
+        .speech-bubble {
+            position: absolute; left: 110%; top: 50%;
+            transform: translateY(-50%) scale(0);
+            transform-origin: left center;
+            background: #000; padding: 12px 25px; border-radius: 20px;
+            font-size: 1.5rem; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; z-index: 20; border: 5px solid #006400; color: #ffd700; 
+        }
+
+        .profile-wrapper:hover .speech-bubble { transform: translateY(-50%) scale(1); opacity: 1; left: 120%; }
+        
+        .about-text-box {
+            background: #000; 
+            border: 6px solid #006400; /* Locked to Dark Green */
+            padding: 40px; max-width: 800px;
+            box-shadow: 20px 20px 0px #333; margin-top: 30px;
+            border-top-right-radius: 60px 25px; border-bottom-left-radius: 25px 60px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s;
+            cursor: pointer;
+            color: #ffd700; 
+        }
+
+        .about-text-box:hover {
+            transform: scale(1.05) translateY(-10px) rotate(-1deg);
+            box-shadow: 45px 45px 0px rgba(0,0,0,0.15);
+            border-color: #006400; /* Stay Green on Pop */
+        }
+
+        /* --- PROJECT DECK --- */
+        .deck-wrapper {
+            position: relative;
+            width: 100%;
+            height: 750px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1500px;
+            pointer-events: none;
+        }
+
+        .render-card {
+            position: absolute;
+            background: #000; 
+            width: 90%; max-width: 950px; height: 650px;
+            cursor: pointer;
+            pointer-events: auto;
+            border: 10px solid #006400; /* Locked to Dark Green */
+            box-shadow: 20px 20px 0px #333;
+            display: flex; flex-direction: column; overflow: hidden;
+            will-change: transform;
+            transition: opacity 0.4s, box-shadow 0.4s, border-color 0.3s;
+        }
+
+        .render-card.hovering {
+            z-index: 1000 !important;
+            box-shadow: 80px 80px 50px rgba(0, 0, 0, 0.3);
+            border-color: #006400; /* Stay Green on Hover */
+        }
+
+        .render-card img { width: calc(100% - 40px); margin: 20px auto 0; height: 75%; object-fit: cover; border: 5px solid #006400; pointer-events: none; }
+        .render-info { padding: 20px 40px; flex-grow: 1; display: flex; align-items: center; pointer-events: none; color: #ffd700; }
+        .render-title { font-size: 3.5rem; }
+
+        .render-card.exit { transform: translateX(180%) rotate(35deg) scale(0.5) !important; opacity: 0; transition: transform 0.7s ease, opacity 0.4s !important; }
+
+        /* --- BACKGROUND --- */
+        .painterly-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; background-image: url('paint-bg8.jpg'); background-size: cover; pointer-events: none; }
+
+        /* --- FOOTER --- */
+        .site-footer { 
+            padding: 50px 0; text-align: center; border-top: 6px solid #006400; 
+            margin-top: auto; position: relative; z-index: 1000; background: #000;
+        }
+        
+        .bottom-glow-line { position: absolute; top: -6px; left: 0; width: 100%; height: 6px; background: #111; transition: 0.4s; }
+        
+        .discord-btn {
+            color: #ffd700; text-decoration: none; font-size: 2rem; border: 5px solid #006400;
+            padding: 15px 40px; display: inline-block; transition: 0.3s; background: transparent;
+            position: relative; z-index: 2;
+        }
+
+        .discord-btn:hover {
+            background: #ffffff; color: #ffd700; border-color: #006400; box-shadow: 10px 10px 0px #333; transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-bar glow-panel">
+        <h2 class="top-bar-text">"Your imagination made into reality."</h2>
+        <div class="menu-icon" onclick="toggleMenu()">
+            <div></div><div></div><div></div>
+        </div>
+    </header>
+    <div class="glow-line"></div>
+
+    <div id="menu-overlay">
+        <div class="menu-item" onclick="showSection('about')">ABOUT ME</div>
+        <div class="menu-item" onclick="showSection('projects')">PROJECTS</div>
+    </div>
+
+    <div class="painterly-background"></div>
+
+    <!-- ABOUT ME SECTION -->
+    <section id="about" class="content-section active">
+        <div class="profile-wrapper">
+            <div class="speech-bubble">"You can count on me. 😉"</div>
+            <img src="profile1.jpg" alt="Dev" class="profile-pic">
+        </div>
+        <h1 style="font-size: 4rem;">ItsTheRealDevForever</h1>
+        <div class="about-text-box">
+            <h2 style="font-size: 3rem; margin-bottom: 15px; text-decoration: underline;">Who am I?</h2>
+            <p style="font-size: 1.8rem; line-height: 1.4;">I am a 3D Stylized Artist and Roblox Modeller dedicated to bringing ideas to stunning 3d models. From simple foliage to full scale environments, I focus on stylized design that are perfect for game devleopment.You can rely on me to bring your game to the next level.</p>
+        </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section id="projects" class="content-section">
+        <div class="deck-wrapper" id="deck">
+            <div class="render-card"><img src="render1.jpg"><div class="render-info"><h3 class="render-title">Forest</h3></div></div>
+            <div class="render-card"><img src="render2.jpg"><div class="render-info"><h3 class="render-title">Sword</h3></div></div>
+            <div class="render-card"><img src="render3.jpg"><div class="render-info"><h3 class="render-title">Treasure Chest</h3></div></div>
+            <div class="render-card"><img src="render4.jpg"><div class="render-info"><h3 class="render-title">Cottage</h3></div></div>
+            <div class="render-card"><img src="render5.jpg"><div class="render-info"><h3 class="render-title">Rock</h3></div></div>
+            <div class="render-card"><img src="render6.jpg"><div class="render-info"><h3 class="render-title">Italian Street</h3></div></div>
+            <div class="render-card"><img src="render7.jpg"><div class="render-info"><h3 class="render-title">Windmill</h3></div></div>
+            <div class="render-card"><img src="render8.jpg"><div class="render-info"><h3 class="render-title">Vase</h3></div></div>
+            <div class="render-card"><img src="render9.jpg"><div class="render-info"><h3 class="render-title">Fantasy Scene</h3></div></div>
+            <div class="render-card"><img src="render10.jpg"><div class="render-info"><h3 class="render-title">Hands</h3></div></div>
+        </div>
+    </section>
+
+    <footer class="site-footer glow-panel">
+        <div class="bottom-glow-line"></div>
+        <a href="https://discordapp.com/users/1398971445471871137" target="_blank" class="discord-btn">Contact Me via Discord</a>
+    </footer>
+
+    <script>
+        function toggleMenu() { document.getElementById('menu-overlay').classList.toggle('open'); }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            toggleMenu();
+            if(sectionId === 'projects') setupDeck();
+        }
+
+        const deck = document.getElementById('deck');
+        let cards = Array.from(deck.querySelectorAll('.render-card'));
+        
+        function setupDeck() {
+            cards.forEach((card, index) => {
+                const randomRot = (Math.random() * 4 - 2).toFixed(2);
+                card.dataset.baseRot = randomRot; 
+                card.style.transform = `rotate(${randomRot}deg)`;
+                card.style.zIndex = cards.length - index;
+                card.classList.remove('exit');
+
+                card.onmouseenter = () => {
+                    const hoverTilt = (Math.random() * 6 - 3).toFixed(2); 
+                    card.classList.add('hovering');
+                    card.style.transition = "transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.3s";
+                    card.style.transform = `translate(-20px, -40px) rotate(${hoverTilt}deg) scale(1.05)`;
+                };
+
+                card.onmouseleave = () => {
+                    card.classList.remove('hovering');
+                    card.style.transition = "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)";
+                    card.style.transform = `rotate(${card.dataset.baseRot}deg)`;
+                };
+            });
+        }
+
+        deck.addEventListener('click', (e) => {
+            const topCard = cards[0];
+            if (!topCard || topCard.classList.contains('exit')) return;
+            topCard.classList.add('exit');
+            setTimeout(() => {
+                topCard.classList.remove('exit', 'hovering');
+                deck.appendChild(topCard); 
+                const movedCard = cards.shift();
+                cards.push(movedCard);
+                setupDeck(); 
+            }, 700);
+        });
+
+        setupDeck();
+    </script>
+</body>
+</html>
